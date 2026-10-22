@@ -1,33 +1,33 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getToken } from "../utils/auth";
+import { getToken, clearToken } from "../utils/auth";
 import { getMe } from "../services/auth.api";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, adminOnly = false }) {
   const [isValid, setIsValid] = useState(null);
   const token = getToken();
 
   useEffect(() => {
-    // Check if dev bypass is enabled for testing/grading protected routes
-    const isBypass = localStorage.getItem("dev_bypass") === "true" || window.location.search.includes("bypass=true");
-    if (isBypass) {
-      setIsValid(true);
-      return;
-    }
-
     if (!token) {
       setIsValid(false);
       return;
     }
 
-    // Verify token is valid
+    // Verify token is valid and check role for admin-only routes
     getMe()
-      .then(() => setIsValid(true))
+      .then((res) => {
+        const user = res?.data || res;
+        if (adminOnly && user?.role !== "admin") {
+          setIsValid("forbidden");
+          return;
+        }
+        setIsValid(true);
+      })
       .catch(() => {
-        // Fallback: if token exists but network/server check fails, still allow if token exists
-        setIsValid(!!token);
+        clearToken();
+        setIsValid(false);
       });
-  }, [token]);
+  }, [token, adminOnly]);
 
   if (isValid === null) {
     return (
@@ -35,6 +35,10 @@ export default function ProtectedRoute({ children }) {
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     );
+  }
+
+  if (isValid === "forbidden") {
+    return <Navigate to="/student" replace />;
   }
 
   if (!isValid) {

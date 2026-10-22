@@ -73,7 +73,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute adminOnly>
                 <Suspense fallback={<LoadingSpinner />}>
                   <AdminDashboard />
                 </Suspense>

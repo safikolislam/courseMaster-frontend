@@ -133,7 +133,6 @@ export default function Navbar() {
                             className="
                 menu menu-sm dropdown-content mt-3 p-3 shadow
                 bg-base-100 rounded-box w-56 border border-base-300
-                items-center text-center
               "
                         >
                             <li><NavLink className={navLinkClass} to="/" end>Home</NavLink></li>
@@ -164,7 +163,7 @@ export default function Navbar() {
                                 </>
                             ) : (
                                 <>
-                                    <div className="flex flex-col items-center gap-2 py-2">
+                                    <div className="flex flex-col items-start gap-2 py-2 px-3 w-full">
                                         <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
                                             {initials}
                                         </div>
@@ -173,12 +172,6 @@ export default function Navbar() {
                                     </div>
 
                                     <div className="my-2 w-full border-t border-base-300" />
-
-                                    <li className="w-full">
-                                        <Link to={me?.role === "admin" ? "/admin" : "/student"} className="w-full">
-                                            Dashboard
-                                        </Link>
-                                    </li>
 
                                     <li className="w-full">
                                         <button onClick={handleLogout} className="btn btn-ghost btn-sm w-full text-red-500">
